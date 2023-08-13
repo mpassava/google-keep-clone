@@ -8,6 +8,7 @@ class App {
         this.$noteTitle = document.querySelector('#note-title');
         this.$noteText = document.querySelector('#note-text');
         this.$formButtons = document.querySelector('#form-buttons');
+        this.$closeButton = document.querySelector('#form-close-button');
 
         this.addEventListeners();
     }
@@ -23,6 +24,11 @@ class App {
             const text = this.$noteText.value;
             const hasNote = title || text;
             if (hasNote) this.addNote({ title, text });
+        });
+
+        this.$closeButton.addEventListener('click', event => {
+            event.stopPropagation();
+            this.closeForm();
         });
     }
 
@@ -51,10 +57,10 @@ class App {
         this.$noteText.value = '';
     }
 
-    addNote(note) {
+    addNote({ title, text }) {
         const newNote = {
-            title: note.title,
-            text: note.text,
+            title,
+            text,
             color: 'white',
             id: this.notes.length > 0 ? this.notes[this.notes.length -1].id + 1 : 1
         }
