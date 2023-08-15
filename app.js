@@ -26,6 +26,7 @@ class App {
             this.handleFormClick(event);
             this.selectNote(event);
             this.openModal(event);
+            this.deleteNote(event);
         });
 
         document.body.addEventListener('mouseover', event => {
@@ -94,6 +95,9 @@ class App {
     }
 
     openModal(event) {
+        if (event.target.matches('.toolbar-delete')) return;
+        if (event.target.matches('.toolbar-color')) return;
+
         if (event.target.closest('.note')) {
             this.$modal.classList.toggle('open-modal');
             this.$modalTitle.value = this.title;
@@ -110,7 +114,7 @@ class App {
         if (!event.target.matches('.toolbar-color')) return;
         this.id = event.target.dataset.id;
         const noteCoords = event.target.getBoundingClientRect();
-        const horizontal = noteCoords.x + window.scrollX;
+        const horizontal = noteCoords.x + window.scrollX - 100;
         const vertical = noteCoords.y + window.scrollY +20;
         // this.$colorTooltip.style.transform = `translate(${horizontal}px, ${vertical}px)`;
         this.$colorTooltip.style.left = `${horizontal}px`;
@@ -175,11 +179,19 @@ class App {
                 <div class="toolbar-container">
                     <div class="toolbar">
                         <img class="toolbar-color" data-id="${note.id}" src="/img/palette-solid.jpg">
-                        <img class="toolbar-delete" src="/img/trash-solid.jpg">
+                        <img class="toolbar-delete" data-id="${note.id}" src="/img/trash-solid.jpg">
                     </div>
                 </div>
             </div>
         `).join("");
+    }
+
+    deleteNote(event) {
+        event.stopPropagation();
+        if (!event.target.matches('.toolbar-delete')) return;
+        const id = event.target.dataset.id;
+        this.notes = this.notes.filter(note => note.id !== Number(id));
+        this.displayNotes();
     }
 }
 
